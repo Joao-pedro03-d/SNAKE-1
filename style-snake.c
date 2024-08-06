@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include "snake.h"
 
-void OpenStyleSnake() {
+void openStyleSnake() {
     typedef enum { SNAKE_1, SNAKE_2, SNAKE_3, VOLTAR_MENU} SnakeOption;
     const int screenWidth = 800;
     const int screenHeight = 800;
