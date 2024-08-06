@@ -1,0 +1,82 @@
+################################
+#..............................0
+1..............................#
+#...#################..........#
+#...#...............#..........#
+#...#...............2..........#
+#...#...............#..........#
+#...0...............#..........#
+#...#...............#..........#
+#...#################..........#
+#..............................1
+#..............................#
+#..............................#
+#..............................#
+############2###################
+
+
+void LoadMap(const char *filename, char map[MAX_MAP_SIZE][MAX_MAP_SIZE], int *width, int *height) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        return;
+    }
+
+    *width = 0;
+    *height = 0;
+
+    char line[MAX_MAP_SIZE + 1]; // +1 para o terminador de string
+    while (fgets(line, sizeof(line), file)) {
+        for (int i = 0; line[i] != '\0' && line[i] != '\n'; i++) {
+            map[*height][i] = line[i]; // Copia o caractere
+            if (i + 1 > *width) {
+                *width = i + 1; // Atualiza a largura do mapa
+            }
+        }
+        (*height)++;
+    }
+
+    fclose(file);
+}
+
+void StartGame() {
+    const int screenWidth = 800;
+    const int screenHeight = 800;
+    InitWindow(screenWidth, screenHeight, "Jogo da Cobrinha");
+    
+    Texture2D blockTexture = LoadTexture("mapaMario/bloco.png");
+    Texture2D tunnelTexture = LoadTexture("mapaMario/tunel.png");
+
+    char map[MAX_MAP_SIZE][MAX_MAP_SIZE];
+    int mapWidth = 0, mapHeight = 0;
+
+    LoadMap("mapaMario/mario.txt", map, &mapWidth, &mapHeight);
+
+    int cellSize = 20;
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        // Desenhar o mapa
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                if (map[y][x] == '#') {
+                    // Escalando a textura do bloco
+                    Vector2 position = {(float)(x * cellSize), (float)(y * cellSize)};
+                    DrawTextureEx(blockTexture, position, 0.0f, (float)cellSize / (float)blockTexture.width, WHITE);
+                } else if (map[y][x] >= '0' && map[y][x] <= '9') {
+                    // Escalando a textura do túnel
+                    Vector2 position = {(float)(x * cellSize), (float)(y * cellSize)};
+                    DrawTextureEx(tunnelTexture, position, 0.0f, (float)cellSize / (float)tunnelTexture.width, WHITE);
+                }
+            }
+        }
+
+        EndDrawing();
+    }
+
+    UnloadTexture(blockTexture);
+    UnloadTexture(tunnelTexture);
+    CloseWindow(); // Fecha a janela do jogo
+}

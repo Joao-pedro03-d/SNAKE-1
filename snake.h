@@ -2,6 +2,6 @@
 #define SNAKE_H
 
 // Funções para o estilo Snake
-void OpenStyleSnake();
+extern void openStyleSnake();
 
-#endif // SNAKE_H
+#endif 
